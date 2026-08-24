@@ -1,0 +1,102 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // Group content is visible to that group's members only.
+    function isMember(groupId) {
+      return signedIn()
+             && exists(/databases/$(database)/documents/groups/$(groupId)/members/$(request.auth.uid));
+    }
+
+    // A player's badge. Readable by any signed-in player (other crew members
+    // need the name and avatar); writable only by its owner.
+    match /users/{userId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn()
+                            && request.auth.uid == userId
+                            && isValidProfile(request.resource.data);
+      allow delete: if false;
+    }
+
+    function isValidProfile(data) {
+      return data.name is string
+             && data.name.size() >= 2
+             && data.name.size() <= 18
+             && data.avatar is map
+             && data.avatar.color is string
+             && data.avatar.backdrop is string
+             && data.avatar.eyes is string
+             && data.avatar.accessory is string;
+    }
+
+    match /groups/{groupId} {
+      // Checked against memberIds directly so the "my groups" query passes too.
+      allow read: if signedIn() && request.auth.uid in resource.data.memberIds;
+      // Creating, joining and removing all go through the server.
+      allow write: if false;
+
+      match /members/{memberId} {
+        allow read: if isMember(groupId);
+        // The only client write in the whole group: your own presence heartbeat.
+        allow update: if signedIn()
+                      && request.auth.uid == memberId
+                      && request.resource.data.diff(resource.data)
+                           .affectedKeys().hasOnly(['lastSeen']);
+        allow create, delete: if false;
+      }
+
+      match /messages/{messageId} {
+        allow read: if isMember(groupId);
+        allow create: if isMember(groupId)
+                      && request.resource.data.authorId == request.auth.uid
+                      && request.resource.data.text is string
+                      && request.resource.data.text.size() > 0
+                      && request.resource.data.text.size() <= 300;
+        allow update, delete: if false;
+      }
+
+      match /sessions/{sessionId} {
+        allow read: if isMember(groupId);
+        allow write: if false;
+      }
+
+      match /matches/{matchId} {
+        allow read: if isMember(groupId);
+        allow write: if false;
+
+        // Clues are public the moment they are sent.
+        match /clues/{clueId} {
+          allow read: if isMember(groupId);
+          allow write: if false;
+        }
+
+        // Your own word, and nobody else's. This is what keeps the game honest:
+        // a player cannot read another player's role document.
+        match /roles/{playerId} {
+          allow read: if signedIn() && request.auth.uid == playerId;
+          allow write: if false;
+        }
+
+        // The imposter list and both words. No client may ever read this.
+        match /secret/{docId} {
+          allow read, write: if false;
+        }
+
+        // Votes stay sealed so nobody can see how others voted before the
+        // reveal. The server tallies them and publishes only the result.
+        match /roundVotes/{voteId} {
+          allow read, write: if false;
+        }
+
+        match /verdictVotes/{voteId} {
+          allow read, write: if false;
+        }
+      }
+    }
+  }
+}
