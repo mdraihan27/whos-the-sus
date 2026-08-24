@@ -58,7 +58,7 @@ export function SignInScreen() {
 
       <div className="rounded-3xl border-2 border-border shadow-sm/70 bg-white/90 p-8 shadow-2xl shadow-black/50 backdrop-blur">
         <p className="text-center text-xs font-semibold uppercase tracking-[0.25em] text-sky-500">
-          Crew manifest
+          Join the Crew
         </p>
         <h1 className="mt-3 text-center text-4xl font-black tracking-tight">
           Who&apos;s the <span className="text-sus">Sus</span>?

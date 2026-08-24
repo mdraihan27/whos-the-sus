@@ -7,13 +7,18 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'A bubbly social deduction game',
     start_url: '/',
     display: 'standalone',
-    background_color: '#38bdf8', // sky-400
+    background_color: '#ffffff', // white splash screen
     theme_color: '#38bdf8',
     icons: [
       {
-        src: '/icon-512x512.jpg',
+        src: '/app-icon.svg',
+        sizes: '1024x1024',
+        type: 'image/svg+xml',
+      },
+      {
+        src: '/app-icon.svg',
         sizes: '512x512',
-        type: 'image/jpeg',
+        type: 'image/svg+xml',
       },
     ],
   };

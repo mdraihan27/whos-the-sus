@@ -121,8 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setProfileState({
           uid,
           profile: null,
-          error:
-            "Couldn't read your profile. Check that Firestore is enabled and firestore.rules is deployed.",
+          error: "Oops, we couldn't load your profile. Please check your connection or try refreshing!",
         }),
     );
   }, [user]);

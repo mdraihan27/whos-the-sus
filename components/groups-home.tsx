@@ -31,9 +31,9 @@ function GroupCard({ group, uid }: { group: GroupSummary; uid: string }) {
   return (
     <Link
       href={`/g/${group.id}`}
-      className="group flex items-center gap-4 rounded-2xl border-2 border-border shadow-sm bg-white/90 p-4 transition hover:border-sky-300 hover:bg-white"
+      className="group flex items-center gap-4 rounded-3xl border-2 border-rose-100 shadow-sm bg-white/90 p-4 transition hover:border-rose-300 hover:bg-white hover:shadow-md"
     >
-      <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-gradient-to-br ${colorClass} text-lg font-black`}>
+      <span className={`grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-br ${colorClass} text-xl font-black shadow-inner`}>
         {group.name.slice(0, 1).toUpperCase()}
       </span>
       <span className="min-w-0 flex-1">
@@ -69,7 +69,7 @@ export function GroupsHome() {
     return subscribeToMyGroups(
       user.uid,
       (next) => setGroups(next),
-      () => setLoadError("Couldn't load your groups. Check that firestore.rules is deployed."),
+      () => setLoadError("Uh oh, we couldn't find your crews! Check your connection or refresh the page."),
     );
   }, [user]);
 
@@ -128,9 +128,9 @@ export function GroupsHome() {
           <div className="mt-7 grid gap-3 sm:grid-cols-2">
             <form
               onSubmit={handleCreate}
-              className="rounded-2xl border-2 border-border shadow-sm bg-white/90 p-5"
+              className="rounded-3xl border-2 border-rose-200 shadow-md bg-white/90 p-6"
             >
-              <h2 className="text-sm font-bold uppercase tracking-wider text-sky-500">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-rose-500">
                 New group
               </h2>
               <input
@@ -138,12 +138,12 @@ export function GroupsHome() {
                 onChange={(event) => setName(event.target.value)}
                 maxLength={GROUP_NAME_MAX}
                 placeholder="Friday Night Crew"
-                className="mt-3 w-full rounded-xl border-2 border-border shadow-sm bg-bubble/80 px-3.5 py-2.5 text-sm outline-none transition placeholder:text-sky-600 focus:border-sky-300"
+                className="mt-3 w-full rounded-2xl border-2 border-rose-100 shadow-inner bg-rose-50/50 px-4 py-3 text-sm outline-none transition placeholder:text-rose-400 focus:border-rose-400 focus:bg-white"
               />
               <button
                 type="submit"
                 disabled={busy !== null || name.trim().length < 2}
-                className="mt-3 w-full rounded-xl bg-sky-400 hover:bg-sky-500 px-4 py-2.5 text-sm font-semibold transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-40"
+                className="mt-4 w-full rounded-2xl bg-gradient-to-r from-rose-400 to-pink-500 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:from-rose-500 hover:to-pink-600 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {busy === "create" ? "Creating…" : "Create group"}
               </button>
@@ -151,9 +151,9 @@ export function GroupsHome() {
 
             <form
               onSubmit={handleJoin}
-              className="rounded-2xl border-2 border-border shadow-sm bg-white/90 p-5"
+              className="rounded-3xl border-2 border-orange-200 shadow-md bg-white/90 p-6"
             >
-              <h2 className="text-sm font-bold uppercase tracking-wider text-cyan-500">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-orange-500">
                 Join a group
               </h2>
               <input
@@ -161,12 +161,12 @@ export function GroupsHome() {
                 onChange={(event) => setCode(event.target.value.toUpperCase())}
                 maxLength={6}
                 placeholder="ABC123"
-                className="mt-3 w-full rounded-xl border-2 border-border shadow-sm bg-bubble/80 px-3.5 py-2.5 font-mono text-sm tracking-[0.3em] outline-none transition placeholder:tracking-normal placeholder:text-sky-600 focus:border-cyan-400"
+                className="mt-3 w-full rounded-2xl border-2 border-orange-100 shadow-inner bg-orange-50/50 px-4 py-3 font-mono text-sm tracking-[0.3em] outline-none transition placeholder:tracking-normal placeholder:text-orange-400 focus:border-orange-400 focus:bg-white"
               />
               <button
                 type="submit"
                 disabled={busy !== null || code.trim().length < 4}
-                className="mt-3 w-full rounded-xl bg-cyan-400 hover:bg-cyan-500 px-4 py-2.5 text-sm font-semibold transition hover:bg-cyan-500 disabled:cursor-not-allowed disabled:opacity-40"
+                className="mt-4 w-full rounded-2xl bg-gradient-to-r from-amber-400 to-orange-500 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:from-amber-500 hover:to-orange-600 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {busy === "join" ? "Joining…" : "Join"}
               </button>
@@ -191,8 +191,8 @@ export function GroupsHome() {
             ) : groups === null ? (
               <p className="text-sm text-sky-600">Loading…</p>
             ) : groups.length === 0 ? (
-              <div className="rounded-2xl border-2 border-dashed border-border shadow-sm bg-bubble/80 px-5 py-10 text-center">
-                <p className="text-sm text-sky-700">
+              <div className="rounded-3xl border-2 border-dashed border-rose-200 shadow-sm bg-rose-50/50 px-5 py-10 text-center">
+                <p className="text-sm text-rose-700">
                   No groups yet. Create one and share the code with your friends.
                 </p>
               </div>
